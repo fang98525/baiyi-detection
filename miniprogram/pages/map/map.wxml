@@ -1,0 +1,74 @@
+<view class="container map-container">
+  
+  <!-- 顶部控制栏 -->
+  <view class="top-controls">
+    <!-- 项目选择 -->
+    <picker mode="selector" range="{{projects}}" range-key="name" bindchange="onProjectChange" value="{{currentProjectIndex}}">
+      <view class="project-selector">
+        <text class="project-name">{{currentProject ? currentProject.name : '选择项目'}}</text>
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+
+    <!-- 状态筛选 -->
+    <view class="filter-btn" bindtap="toggleFilter">
+      <text>筛选</text>
+    </view>
+  </view>
+
+  <!-- 筛选浮层 -->
+  <view class="filter-panel" wx:if="{{showFilter}}">
+    <view class="filter-item {{filterStatus === 'all' ? 'active' : ''}}" data-status="all" bindtap="onFilterSelect">全部</view>
+    <view class="filter-item {{filterStatus === 'alert' ? 'active' : ''}}" data-status="alert" bindtap="onFilterSelect">警报</view>
+    <view class="filter-item {{filterStatus === 'warning' ? 'active' : ''}}" data-status="warning" bindtap="onFilterSelect">异常</view>
+    <view class="filter-item {{filterStatus === 'offline' ? 'active' : ''}}" data-status="offline" bindtap="onFilterSelect">离线</view>
+  </view>
+
+  <!-- 地图组件 -->
+  <map 
+    id="mainMap"
+    class="map"
+    longitude="{{longitude}}" 
+    latitude="{{latitude}}" 
+    scale="{{scale}}" 
+    markers="{{markers}}" 
+    show-location
+    bindmarkertap="onMarkerTap"
+    bindregionchange="onRegionChange"
+    setting="{{setting}}"
+  >
+    <!-- 自定义气泡 (Callout) 已在 markers 数据中定义，这里主要是覆盖控件 -->
+  </map>
+
+  <!-- 设备详情卡片 (底部浮层) -->
+  <view class="device-card" wx:if="{{selectedDevice}}">
+    <view class="card-header">
+      <view class="device-info">
+        <text class="device-sn">SN: {{selectedDevice.sn}}</text>
+        <text class="device-status status-{{selectedDevice.status}}">{{selectedDevice.statusText}}</text>
+      </view>
+      <view class="close-btn" bindtap="closeDeviceCard">×</view>
+    </view>
+    
+    <view class="card-body">
+      <view class="info-row">
+        <text class="label">电量:</text>
+        <text class="value">{{selectedDevice.battery}}%</text>
+      </view>
+      <view class="info-row">
+        <text class="label">信号:</text>
+        <text class="value">{{selectedDevice.signal}} dBm</text>
+      </view>
+      <view class="info-row">
+        <text class="label">更新:</text>
+        <text class="value">{{selectedDevice.lastUpdate}}</text>
+      </view>
+    </view>
+
+    <view class="card-footer">
+      <button class="btn-nav" size="mini" bindtap="navigateToDevice">导航</button>
+      <button class="btn-detail" size="mini" type="primary" bindtap="viewDeviceDetail">详情</button>
+    </view>
+  </view>
+</view>
+

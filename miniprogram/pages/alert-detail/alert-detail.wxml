@@ -1,0 +1,113 @@
+<view class="container">
+  <!-- 状态步骤条 -->
+  <view class="steps-area">
+    <view class="step {{statusStep >= 0 ? 'active' : ''}}">
+      <view class="circle">1</view>
+      <text>待处理</text>
+    </view>
+    <view class="line {{statusStep >= 1 ? 'active' : ''}}"></view>
+    <view class="step {{statusStep >= 1 ? 'active' : ''}}">
+      <view class="circle">2</view>
+      <text>处理中</text>
+    </view>
+    <view class="line {{statusStep >= 2 ? 'active' : ''}}"></view>
+    <view class="step {{statusStep >= 2 ? 'active' : ''}}">
+      <view class="circle">3</view>
+      <text>已完成</text>
+    </view>
+  </view>
+
+  <!-- 警报信息 -->
+  <view class="card info-card">
+    <view class="card-title">基本信息</view>
+    <view class="info-row">
+      <text class="label">设备序列号</text>
+      <text class="value">{{alert.sn}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">所属项目</text>
+      <text class="value">{{alert.project}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">触发时间</text>
+      <text class="value">{{alert.time}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">设备电量</text>
+      <text class="value">{{alert.battery}}%</text>
+    </view>
+    <view class="info-row">
+      <text class="label">信号强度</text>
+      <text class="value">{{alert.signal}} dBm</text>
+    </view>
+  </view>
+
+  <!-- 操作区域 -->
+  
+  <!-- 状态：待处理 -->
+  <view class="action-area" wx:if="{{alert.status === 'pending'}}">
+    <button class="btn-primary" bindtap="startHandling">开始处理</button>
+  </view>
+
+  <!-- 状态：处理中 (填写表单) -->
+  <view class="card form-card" wx:if="{{alert.status === 'handling'}}">
+    <view class="card-title">处理结果录入</view>
+    
+    <view class="form-item">
+      <text class="form-label">处理方式 (必选)</text>
+      <radio-group class="radio-group" bindchange="onResultChange">
+        <label class="radio" wx:for="{{resultOptions}}" wx:key="value">
+          <radio value="{{item.value}}" checked="{{item.checked}}"/>{{item.name}}
+        </label>
+      </radio-group>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">现场照片 (必填)</text>
+      <view class="image-uploader">
+        <view class="image-item" wx:for="{{images}}" wx:key="*this">
+          <image src="{{item}}" mode="aspectFill"></image>
+        </view>
+        <view class="upload-btn" bindtap="chooseImage" wx:if="{{images.length < 3}}">
+          <text>+</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">备注说明</text>
+      <textarea class="textarea" placeholder="请输入备注信息..." bindinput="onRemarkInput"></textarea>
+    </view>
+
+    <button class="btn-primary submit-btn" bindtap="submitResult">提交处理</button>
+  </view>
+
+  <!-- 状态：已完成 (展示结果) -->
+  <view class="card result-card" wx:if="{{alert.status === 'done'}}">
+    <view class="card-title">处理记录</view>
+    <view class="info-row">
+      <text class="label">处理人</text>
+      <text class="value">{{alert.handler}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">完成时间</text>
+      <text class="value">{{alert.finishTime}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">处理方式</text>
+      <text class="value">{{alert.resultText}}</text>
+    </view>
+    <view class="info-row column">
+      <text class="label">现场照片</text>
+      <view class="image-list">
+        <image wx:for="{{alert.images}}" wx:key="*this" src="{{item}}" mode="aspectFill" class="result-img"></image>
+      </view>
+    </view>
+    <view class="info-row column">
+      <text class="label">备注</text>
+      <text class="value remark">{{alert.remark}}</text>
+    </view>
+  </view>
+
+</view>
+

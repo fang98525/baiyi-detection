@@ -1,0 +1,58 @@
+<view class="container">
+  <view class="header status-{{device.status}}">
+    <view class="status-icon">
+      <text wx:if="{{device.status === 'alert'}}">⚠️</text>
+      <text wx:elif="{{device.status === 'normal'}}">✔</text>
+      <text wx:else>?</text>
+    </view>
+    <text class="status-text">{{device.statusText}}</text>
+    <text class="update-time">更新于: {{device.lastUpdate}}</text>
+  </view>
+
+  <view class="card info-grid">
+    <view class="grid-item">
+      <text class="grid-label">SN</text>
+      <text class="grid-value">{{device.sn}}</text>
+    </view>
+    <view class="grid-item">
+      <text class="grid-label">电量</text>
+      <text class="grid-value {{device.battery < 20 ? 'warning' : ''}}">{{device.battery}}%</text>
+    </view>
+    <view class="grid-item">
+      <text class="grid-label">信号</text>
+      <text class="grid-value">{{device.signal}} dBm</text>
+    </view>
+    <view class="grid-item">
+      <text class="grid-label">温度</text>
+      <text class="grid-value">24°C</text>
+    </view>
+  </view>
+
+  <view class="card map-card">
+    <view class="card-title">设备位置</view>
+    <map 
+      class="mini-map"
+      latitude="{{device.latitude}}"
+      longitude="{{device.longitude}}"
+      markers="{{markers}}"
+      scale="16"
+      enable-scroll="{{false}}"
+      enable-zoom="{{false}}"
+    ></map>
+    <view class="address-row">
+      <text class="address">{{device.address}}</text>
+      <view class="nav-btn" bindtap="openLocation">导航</view>
+    </view>
+  </view>
+
+  <view class="card log-card">
+    <view class="card-title">历史日志</view>
+    <view class="log-list">
+      <view class="log-item" wx:for="{{logs}}" wx:key="id">
+        <text class="log-time">{{item.time}}</text>
+        <text class="log-content">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+

@@ -1,0 +1,176 @@
+/* pages/map/map.wxss */
+.map-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+/* 顶部控制栏 */
+.top-controls {
+  position: absolute;
+  top: 20rpx;
+  left: 20rpx;
+  right: 20rpx;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+  z-index: 100;
+}
+
+.project-selector {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: var(--text-main);
+  flex: 1;
+}
+
+.project-name {
+  max-width: 400rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrow {
+  font-size: 24rpx;
+  margin-left: 10rpx;
+  color: #999;
+}
+
+.filter-btn {
+  font-size: 28rpx;
+  color: var(--color-primary);
+  padding: 10rpx 20rpx;
+  border: 1rpx solid var(--color-primary);
+  border-radius: 30rpx;
+}
+
+/* 筛选面板 */
+.filter-panel {
+  position: absolute;
+  top: 110rpx;
+  right: 20rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 10rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+  z-index: 99;
+  width: 160rpx;
+}
+
+.filter-item {
+  padding: 16rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--text-main);
+  border-bottom: 1rpx solid #eee;
+}
+
+.filter-item:last-child {
+  border-bottom: none;
+}
+
+.filter-item.active {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+/* 设备卡片 */
+.device-card {
+  position: absolute;
+  bottom: 40rpx;
+  left: 20rpx;
+  right: 20rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0,0,0,0.1);
+  z-index: 100;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-sn {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-main);
+}
+
+.device-status {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+.status-normal { color: var(--color-success); background: rgba(7, 193, 96, 0.1); }
+.status-alert { color: var(--color-alert); background: rgba(250, 81, 81, 0.1); }
+.status-warning { color: var(--color-warning); background: rgba(255, 195, 0, 0.1); }
+.status-offline { color: var(--color-offline); background: rgba(178, 178, 178, 0.1); }
+
+.close-btn {
+  font-size: 40rpx;
+  color: #999;
+  padding: 0 10rpx;
+  line-height: 1;
+}
+
+.card-body {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-row .label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.info-row .value {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-top: 4rpx;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+}
+

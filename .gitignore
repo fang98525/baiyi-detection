@@ -1,0 +1,60 @@
+# ---------------------
+# Python / Backend
+# ---------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+
+# Environment Variables
+.env
+.flaskenv
+
+# ---------------------
+# WeChat Miniprogram
+# ---------------------
+node_modules/
+miniprogram_npm/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Unpackaged build files (if using uniapp or other frameworks, adjust accordingly)
+unpackage/
+dist/
+
+# Project config (Optional: keep if you want to share project settings, ignore if private)
+# project.private.config.json is usually user-specific
+miniprogram/project.private.config.json
+
+# ---------------------
+# IDE / Editor
+# ---------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

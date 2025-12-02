@@ -1,0 +1,66 @@
+<view class="container">
+  <!-- 关键指标卡片 -->
+  <view class="stats-grid">
+    <view class="stat-card">
+      <text class="stat-value">{{stats.totalDevices}}</text>
+      <text class="stat-label">总设备数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value success">{{stats.onlineDevices}}</text>
+      <text class="stat-label">在线设备</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value alert">{{stats.todayAlerts}}</text>
+      <text class="stat-label">今日警报</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value warning">{{stats.pendingAlerts}}</text>
+      <text class="stat-label">待处理</text>
+    </view>
+  </view>
+
+  <!-- 警报趋势图 (CSS简易版) -->
+  <view class="card chart-card">
+    <view class="card-header">
+      <text class="card-title">近7日警报趋势</text>
+    </view>
+    <view class="chart-container">
+      <view class="bar-group" wx:for="{{trendData}}" wx:key="day">
+        <view class="bar-wrapper">
+          <view class="bar" style="height: {{item.count * 10}}%; background-color: {{item.count > 5 ? '#FA5151' : '#1296DB'}}"></view>
+        </view>
+        <text class="x-axis">{{item.day}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 低电量设备 -->
+  <view class="card list-card">
+    <view class="card-header">
+      <text class="card-title">低电量关注 ({{lowBatteryDevices.length}})</text>
+    </view>
+    <view class="device-list">
+      <view class="device-item" wx:for="{{lowBatteryDevices}}" wx:key="id">
+        <text class="device-name">{{item.sn}}</text>
+        <text class="device-project">{{item.project}}</text>
+        <text class="device-battery warning">{{item.battery}}%</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 处理效率 -->
+  <view class="card list-card">
+    <view class="card-header">
+      <text class="card-title">平均处理时长</text>
+    </view>
+    <view class="kpi-row">
+      <text class="label">全平台平均</text>
+      <text class="value">2.5 小时</text>
+    </view>
+    <view class="kpi-row">
+      <text class="label">我的平均</text>
+      <text class="value success">1.8 小时</text>
+    </view>
+  </view>
+</view>
+

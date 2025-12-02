@@ -1,0 +1,114 @@
+/* pages/dashboard/dashboard.wxss */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 20rpx;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+.stat-value {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: var(--text-main);
+  margin-bottom: 8rpx;
+}
+
+.stat-value.success { color: var(--color-success); }
+.stat-value.alert { color: var(--color-alert); }
+.stat-value.warning { color: var(--color-warning); }
+
+.stat-label {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+.card-header {
+  border-bottom: 1rpx solid #f5f5f5;
+  padding-bottom: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  border-left: 6rpx solid var(--color-primary);
+  padding-left: 16rpx;
+}
+
+/* Chart Styles */
+.chart-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 300rpx;
+  padding-top: 20rpx;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.bar-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.bar {
+  width: 20rpx;
+  border-radius: 10rpx 10rpx 0 0;
+  min-height: 4rpx;
+  transition: height 0.5s ease;
+}
+
+.x-axis {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin-top: 10rpx;
+}
+
+/* Device List */
+.device-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f9f9f9;
+  font-size: 28rpx;
+}
+
+.device-item:last-child {
+  border-bottom: none;
+}
+
+.device-name { color: var(--text-main); font-weight: 500; }
+.device-project { color: var(--text-secondary); font-size: 24rpx; }
+.device-battery { color: var(--color-warning); font-weight: bold; }
+
+.kpi-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+}
+
+.kpi-row .value.success {
+  color: var(--color-success);
+  font-weight: bold;
+}
+

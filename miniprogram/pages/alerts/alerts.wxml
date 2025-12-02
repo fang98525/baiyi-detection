@@ -1,0 +1,39 @@
+<view class="container">
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">待处理</view>
+    <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">处理中</view>
+    <view class="tab-item {{currentTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">历史记录</view>
+  </view>
+
+  <view class="alert-list">
+    <view class="empty-tip" wx:if="{{alerts.length === 0}}">暂无警报数据</view>
+    
+    <view class="alert-item" wx:for="{{alerts}}" wx:key="id" bindtap="viewDetail" data-id="{{item.id}}">
+      <view class="item-header">
+        <text class="alert-time">{{item.time}}</text>
+        <text class="alert-level level-{{item.level}}">{{item.levelText}}</text>
+      </view>
+      
+      <view class="item-body">
+        <view class="row">
+          <text class="label">设备SN:</text>
+          <text class="value">{{item.sn}}</text>
+        </view>
+        <view class="row">
+          <text class="label">所属项目:</text>
+          <text class="value">{{item.project}}</text>
+        </view>
+        <view class="row">
+          <text class="label">警报类型:</text>
+          <text class="value">{{item.type}}</text>
+        </view>
+      </view>
+      
+      <view class="item-footer">
+        <text class="status-tag status-{{item.status}}">{{item.statusText}}</text>
+        <text class="arrow">></text>
+      </view>
+    </view>
+  </view>
+</view>
+

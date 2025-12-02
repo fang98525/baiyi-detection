@@ -1,0 +1,145 @@
+<view class="container">
+  <form bindsubmit="onSubmit">
+    
+    <!-- 第一部分：核心基础信息 -->
+    <view class="section">
+      <view class="section-title">核心基础信息 (必填)</view>
+      
+      <view class="form-item">
+        <view class="label">水库类别</view>
+        <radio-group name="category" bindchange="onCategoryChange">
+          <label class="radio-label"><radio value="single" checked="{{formData.category === 'single'}}"/>单个水库</label>
+          <label class="radio-label"><radio value="multiple" checked="{{formData.category === 'multiple'}}"/>多个水库集合</label>
+        </radio-group>
+      </view>
+
+      <view class="form-item">
+        <view class="label">水库名称</view>
+        <input name="name" placeholder="请输入水库名称" class="input" />
+      </view>
+
+      <view class="form-item">
+        <view class="label">水库类型</view>
+        <picker bindchange="onTypeChange" value="{{typeIndex}}" range="{{reservoirTypes}}">
+          <view class="picker">
+            {{reservoirTypes[typeIndex]}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="label">水库区域</view>
+        <picker mode="region" bindchange="onRegionChange" value="{{region}}">
+          <view class="picker">
+            {{region[0]}}，{{region[1]}}，{{region[2]}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="label">联系人员</view>
+        <view class="double-input">
+           <picker bindchange="onAdminChange" value="{{adminIndex}}" range="{{adminNames}}" class="picker-half">
+            <view class="picker-inner">{{adminNames[adminIndex] || '选择管理员'}}</view>
+          </picker>
+          <picker bindchange="onManagerChange" value="{{managerIndex}}" range="{{managerNames}}" class="picker-half">
+             <view class="picker-inner">{{managerNames[managerIndex] || '选择负责人'}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第二部分：水库参数信息 -->
+    <view class="section">
+      <view class="section-title">水库参数信息 (选填)</view>
+
+      <view class="form-item">
+        <view class="label">水库坝型</view>
+        <picker bindchange="onDamTypeChange" value="{{damTypeIndex}}" range="{{damTypes}}">
+          <view class="picker {{damTypeIndex === -1 ? 'placeholder' : ''}}">
+            {{damTypeIndex === -1 ? '请选择大坝坝型' : damTypes[damTypeIndex]}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="label">坝顶长度 (米)</view>
+        <input name="crestLength" value="{{formData.crestLength}}" placeholder="请输入长度" type="number" class="input" />
+      </view>
+
+      <view class="form-item">
+        <view class="label">坝脚长度 (米)</view>
+        <input name="toeLength" value="{{formData.toeLength}}" placeholder="请输入长度" type="number" class="input" />
+      </view>
+
+      <view class="form-item">
+        <view class="label">斜坡长度 (米)</view>
+        <input name="slopeLength" value="{{formData.slopeLength}}" placeholder="请输入长度" type="number" class="input" />
+      </view>
+
+      <view class="form-item">
+        <view class="label">最大坝高 (米)</view>
+        <input name="maxHeight" value="{{formData.maxHeight}}" placeholder="请输入高度" type="number" class="input" />
+      </view>
+
+      <view class="form-item">
+        <view class="label">水库地址</view>
+        <view class="input-with-btn">
+          <input name="address" value="{{address}}" placeholder="请选择详细地址" class="input" />
+          <button size="mini" bindtap="chooseLocation" class="btn-small">选择</button>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="label">经纬度</view>
+        <input name="latlng" value="{{latlng}}" placeholder="经度 / 纬度" class="input" disabled />
+      </view>
+    </view>
+
+    <!-- 第三部分：管理与监测信息 -->
+    <view class="section">
+      <view class="section-title">管理与监测信息 (选填)</view>
+
+      <view class="form-item">
+        <view class="label">危害等级</view>
+        <picker bindchange="onHazardLevelChange" value="{{hazardIndex}}" range="{{hazardLevels}}">
+          <view class="picker {{hazardIndex === -1 ? 'placeholder' : ''}}">
+             {{hazardIndex === -1 ? '请选择危害等级' : hazardLevels[hazardIndex]}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="label">检查方法</view>
+        <radio-group name="checkMethod">
+          <label class="block-label" wx:for="{{checkMethods}}" wx:key="*this">
+             <radio value="{{item}}" checked="{{item === formData.checkMethod}}"/> {{item}}
+          </label>
+        </radio-group>
+      </view>
+
+      <view class="form-item">
+        <view class="label">治理方法</view>
+        <radio-group name="governanceMethod">
+          <label class="block-label" wx:for="{{governanceMethods}}" wx:key="*this">
+             <radio value="{{item}}" checked="{{item === formData.governanceMethod}}"/> {{item}}
+          </label>
+        </radio-group>
+      </view>
+
+      <view class="form-item">
+        <view class="label">监测装置</view>
+        <checkbox-group name="monitorDevices">
+          <label class="block-label" wx:for="{{monitorDevices}}" wx:key="name">
+             <checkbox value="{{item.name}}" checked="{{item.checked}}" /> {{item.name}}
+          </label>
+        </checkbox-group>
+      </view>
+    </view>
+
+    <view class="btn-area">
+      <button formType="submit" type="primary">提交</button>
+      <button bindtap="onReset" style="margin-top: 20rpx;">重置</button>
+    </view>
+  </form>
+</view>

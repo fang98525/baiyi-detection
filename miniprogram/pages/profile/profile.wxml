@@ -1,0 +1,99 @@
+<view class="container">
+  <view class="header">
+    <view class="avatar-container">
+      <image class="avatar" src="/images/tabbar/profile-active.png" mode="aspectFit"></image>
+    </view>
+    <view class="user-info">
+      <text class="name">{{userInfo.username || userInfo.name || '用户'}}</text>
+      <view class="role-tag">
+        <text>{{userInfo.roleText || '运维人员'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-group">
+    <view class="menu-item" bindtap="showPasswordModal">
+      <view class="menu-content">
+        <text class="menu-icon">🔒</text>
+        <text class="menu-text">修改密码</text>
+      </view>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="showAboutModal">
+      <view class="menu-content">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-text">关于我们</text>
+      </view>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item">
+      <view class="menu-content">
+        <text class="menu-icon">📌</text>
+        <text class="menu-text">当前版本</text>
+      </view>
+      <text class="version">v2.0.1</text>
+    </view>
+  </view>
+
+  <button class="btn-logout" bindtap="handleLogout">退出登录</button>
+
+  <!-- 修改密码弹窗 -->
+  <view class="modal-mask" wx:if="{{showPasswordModal}}" bindtap="hidePasswordModal">
+    <view class="modal-container" catchtap="stopProp">
+      <view class="modal-header">修改密码</view>
+      <view class="modal-body">
+        <view class="input-group">
+          <input class="modal-input" password placeholder="当前密码" value="{{oldPassword}}" bindinput="inputOldPwd"/>
+        </view>
+        <view class="input-group">
+          <input class="modal-input" password placeholder="新密码 (至少6位)" value="{{newPassword}}" bindinput="inputNewPwd"/>
+        </view>
+        <view class="input-group">
+          <input class="modal-input" password placeholder="确认新密码" value="{{confirmPassword}}" bindinput="inputConfirmPwd"/>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn cancel" bindtap="hidePasswordModal">取消</button>
+        <button class="modal-btn confirm" bindtap="submitPasswordChange">确认修改</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关于我们弹窗 -->
+  <view class="modal-mask" wx:if="{{showAboutModal}}" bindtap="hideAboutModal">
+    <view class="modal-container about-container" catchtap="stopProp">
+      <view class="about-header">
+        <image class="about-logo" src="/images/tabbar/profile-active.png" mode="aspectFit"></image>
+        <view class="about-app-name">Baiyi 智能生态</view>
+      </view>
+      
+      <scroll-view scroll-y class="about-content">
+        <view class="about-section">
+          <view class="section-title">项目背景</view>
+          <view class="section-desc">
+            本项目致力于将人工智能技术应用于生态环境监测领域，解决传统监测手段滞后、数据分析困难等问题，实现全天候、智能化的生态保护。
+          </view>
+        </view>
+
+        <view class="about-section">
+          <view class="section-title">愿景</view>
+          <view class="section-desc">
+            利用 AI 和互联网技术，构建人与自然和谐共生的智慧生态系统，让科技温暖自然。
+          </view>
+        </view>
+
+        <view class="about-section">
+          <view class="section-title">研发团队</view>
+          <view class="section-desc">
+            湖北园建生物防治有限公司  -- 智能创新研发团队
+          </view>
+        </view>
+      </scroll-view>
+      
+      <view class="modal-footer">
+        <button class="modal-btn confirm full-width" bindtap="hideAboutModal">关闭</button>
+      </view>
+    </view>
+  </view>
+
+</view>

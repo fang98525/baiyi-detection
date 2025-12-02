@@ -1,0 +1,109 @@
+<view class="container">
+  <!-- 顶部 Tab 切换 -->
+  <view class="tabs">
+    <view class="tab {{currentTab === 'reservoir' ? 'active' : ''}}" bindtap="switchTab" data-type="reservoir">水库列表</view>
+    <view class="tab {{currentTab === 'embankment' ? 'active' : ''}}" bindtap="switchTab" data-type="embankment">堤防列表</view>
+  </view>
+
+  <!-- 列表区域 -->
+  <scroll-view scroll-y class="list-container">
+    <view class="project-list">
+      <block wx:if="{{currentList.length > 0}}">
+        <view class="project-card" wx:for="{{currentList}}" wx:key="id">
+          <view class="card-header">
+            <text class="title">{{item.name}}</text>
+            <text class="tag {{item.type === 'reservoir' ? 'tag-blue' : 'tag-green'}}">{{item.typeLabel}}</text>
+          </view>
+          
+          <view class="card-content">
+            <view class="info-item">
+              <text class="label">项目名称：</text>
+              <text class="value">{{item.projectName}}</text>
+            </view>
+            <view class="info-item">
+              <text class="label">所属区域：</text>
+              <text class="value">{{item.region}}</text>
+            </view>
+            <view class="info-item">
+              <text class="label">详细地址：</text>
+              <text class="value">{{item.address}}</text>
+            </view>
+          </view>
+
+          <view class="card-actions">
+            <view class="action-btn" bindtap="onViewArchives" data-id="{{item.id}}">
+              <text>档案</text>
+            </view>
+            <view class="action-btn" bindtap="onViewDetail" data-id="{{item.id}}">
+              <text>详情</text>
+            </view>
+            <view class="action-btn" bindtap="onNavigate" data-item="{{item}}">
+              <text>导航</text>
+            </view>
+            <view class="action-btn" bindtap="onEdit" data-id="{{item.id}}">
+              <text>修改</text>
+            </view>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="empty-state">
+          <image src="/images/tabbar/empty.png" mode="aspectFit" class="empty-img" wx:if="{{hasEmptyImg}}"></image>
+          <text>暂无项目数据</text>
+        </view>
+      </block>
+    </view>
+    <!-- 底部占位，防止被按钮遮挡 -->
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
+
+  <!-- 新增按钮 -->
+  <view class="fab-btn" bindtap="onAddProject">
+    <text class="plus-icon">+</text>
+    <text>新增水库/堤防</text>
+  </view>
+
+  <!-- 档案/详情弹窗 -->
+  <view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal">
+    <view class="modal-card" catchtap="preventBubble">
+      <view class="modal-header">
+        <text class="modal-title">{{currentProject.name}} - 档案</text>
+        <view class="close-btn" bindtap="closeModal">×</view>
+      </view>
+      <scroll-view scroll-y class="modal-content">
+        <view class="archive-item">
+          <text class="archive-label">项目编号</text>
+          <text class="archive-value">{{currentProject.id || 'P-2023001'}}</text>
+        </view>
+        <view class="archive-item">
+          <text class="archive-label">建设时间</text>
+          <text class="archive-value">{{currentProject.buildDate || '2022-01-15'}}</text>
+        </view>
+        <view class="archive-item">
+          <text class="archive-label">负责人</text>
+          <text class="archive-value">{{currentProject.manager || '张三'}}</text>
+        </view>
+        <view class="archive-item">
+          <text class="archive-label">联系电话</text>
+          <text class="archive-value">{{currentProject.phone || '13800138000'}}</text>
+        </view>
+        <view class="archive-item">
+          <text class="archive-label">所属流域</text>
+          <text class="archive-value">{{currentProject.basin || '长江流域'}}</text>
+        </view>
+        <view class="archive-item">
+          <text class="archive-label">功能类型</text>
+          <text class="archive-value">{{currentProject.functionType || '防洪/灌溉'}}</text>
+        </view>
+        <view class="archive-item full-width">
+          <text class="archive-label">项目简介</text>
+          <text class="archive-value">{{currentProject.description || '该项目主要用于防洪和灌溉，服务周边农田约5000亩，具有重要的防汛抗旱作用。'}}</text>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <button class="btn-secondary" bindtap="closeModal">关闭</button>
+        <button class="btn-primary" bindtap="onEditFromModal">编辑档案</button>
+      </view>
+    </view>
+  </view>
+</view>
