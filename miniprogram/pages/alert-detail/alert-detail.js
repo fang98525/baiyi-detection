@@ -26,7 +26,9 @@ Page({
   },
 
   fetchDetail(id) {
-    // Mock Data
+    // Mock Data - 模拟获取后端详情
+    // 实际开发中应调用 await get(`/alerts/${id}`)
+    
     const mockData = {
       id: id,
       sn: 'DEV-2002',
@@ -35,11 +37,17 @@ Page({
       battery: 85,
       signal: -72,
       status: 'pending', // pending, handling, done
+      // 记录处理流程
+      timeline: [
+        { status: 'pending', time: '2023/10/27 14:30:00', desc: '设备触发警报' }
+      ]
     };
 
     // Simulate state based on ID or random
     if (id % 3 === 1) {
       mockData.status = 'handling';
+      mockData.handler = '张三'; // 锁定人
+      mockData.timeline.push({ status: 'handling', time: '2023/10/27 14:45:00', desc: '张三 开始处理', operator: '张三' });
     } else if (id % 3 === 2) {
       mockData.status = 'done';
       mockData.handler = '张三';
@@ -47,6 +55,8 @@ Page({
       mockData.resultText = '已更换诱饵';
       mockData.remark = '现场发现大量白蚁，已处理。';
       mockData.images = ['/images/logo.png']; // placeholder
+      mockData.timeline.push({ status: 'handling', time: '2023/10/27 14:45:00', desc: '张三 开始处理', operator: '张三' });
+      mockData.timeline.push({ status: 'done', time: '2023/10/27 15:00:00', desc: '张三 完成处理', operator: '张三' });
     }
 
     this.updateStatusStep(mockData.status);
@@ -61,13 +71,28 @@ Page({
   },
 
   startHandling() {
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    
     wx.showModal({
       title: '确认开始处理',
-      content: '确定要锁定此警报并开始处理吗？',
+      content: `确定由 ${userInfo.username || '您'} 锁定此警报并开始处理吗？`,
       success: (res) => {
         if (res.confirm) {
-          // Mock API Call
-          const newAlert = { ...this.data.alert, status: 'handling' };
+          // Mock API Call to lock alert
+          const newTimeline = [...this.data.alert.timeline, {
+            status: 'handling',
+            time: new Date().toLocaleString(), // use util.formatTime in real app
+            desc: `${userInfo.username} 开始处理`,
+            operator: userInfo.username
+          }];
+
+          const newAlert = { 
+            ...this.data.alert, 
+            status: 'handling',
+            handler: userInfo.username,
+            timeline: newTimeline
+          };
+          
           this.setData({ alert: newAlert });
           this.updateStatusStep('handling');
         }
@@ -96,6 +121,8 @@ Page({
 
   submitResult() {
     const { formData, images } = this.data;
+    const userInfo = wx.getStorageSync('userInfo') || {};
+
     if (!formData.result) {
       wx.showToast({ title: '请选择处理方式', icon: 'none' });
       return;
@@ -112,14 +139,23 @@ Page({
       wx.hideLoading();
       wx.showToast({ title: '处理完成', icon: 'success' });
       
+      const currentTime = new Date().toLocaleString();
+      const newTimeline = [...this.data.alert.timeline, {
+        status: 'done',
+        time: currentTime,
+        desc: `${userInfo.username} 完成处理`,
+        operator: userInfo.username
+      }];
+
       const newAlert = {
         ...this.data.alert,
         status: 'done',
-        handler: '我',
-        finishTime: formatTime(new Date()),
+        handler: userInfo.username, // current user
+        finishTime: currentTime,
         resultText: this.data.resultOptions.find(o => o.value === formData.result).name,
         remark: formData.remark,
-        images: images
+        images: images,
+        timeline: newTimeline
       };
       
       this.setData({ alert: newAlert });

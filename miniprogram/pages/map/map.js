@@ -30,17 +30,30 @@ Page({
   async fetchProjects() {
     try {
       wx.showLoading({ title: '加载项目...' });
-      // 并行获取水库和堤防
+      
+      const userInfo = wx.getStorageSync('userInfo') || {};
+      const userId = userInfo.id;
+      const role = userInfo.role;
+
+      // 并行获取水库和堤防，传递 userId 和 role
       const [reservoirs, embankments] = await Promise.all([
-        get('/projects?type=reservoir').catch(() => []),
-        get('/projects?type=embankment').catch(() => [])
+        get(`/projects?type=reservoir&userId=${userId}&role=${role}`).catch(() => []),
+        get(`/projects?type=embankment&userId=${userId}&role=${role}`).catch(() => [])
       ]);
       
       let projects = [...reservoirs, ...embankments];
 
       if (projects.length === 0) {
         wx.hideLoading();
-        wx.showToast({ title: '暂无项目', icon: 'none' });
+        // 若无项目，清空地图数据
+        this.setData({
+             projects: [],
+             currentProject: null,
+             markers: [],
+             allDevices: [],
+             selectedDevice: null
+        });
+        wx.showToast({ title: '暂无相关项目', icon: 'none' });
         return;
       }
 
@@ -54,6 +67,7 @@ Page({
       this.setData({ 
         projects,
         currentProject: projects[0],
+        currentProjectIndex: 0,
         latitude: projects[0].lat,
         longitude: projects[0].lng
       });
@@ -81,21 +95,35 @@ Page({
   },
 
   async fetchDevices(projectId) {
-    // Mock Devices
+    // Fetch devices from backend for the selected project
+    // For now we still use mock data structure but logically we should call API if available
+    // To keep consistent with the requested optimization, let's improve the data structure
+    // and prepare for real API integration.
+    
+    // const devices = await get(`/projects/${projectId}/devices`); // Future implementation
+    
+    // Improved Mock Data that matches 'devices' table structure more closely
     const mockDevices = [];
     const baseLat = this.data.currentProject.lat;
     const baseLng = this.data.currentProject.lng;
 
+    // Deterministic seed based on projectId to keep markers consistent during switch
+    const seed = projectId * 100; 
+
     for (let i = 0; i < 20; i++) {
-      const status = Math.random() > 0.8 ? 'alert' : (Math.random() > 0.9 ? 'offline' : 'normal');
+      const randomVal = Math.sin(seed + i); // pseudo-random
+      const isAlert = randomVal > 0.8;
+      const isOffline = !isAlert && randomVal < -0.8;
+      const status = isAlert ? 'alert' : (isOffline ? 'offline' : 'normal');
+      
       mockDevices.push({
-        id: i,
+        id: seed + i,
         sn: `DEV-${1000 + i}`,
-        latitude: baseLat + (Math.random() - 0.5) * 0.02,
-        longitude: baseLng + (Math.random() - 0.5) * 0.02,
+        latitude: baseLat + (randomVal * 0.01), // Spread out
+        longitude: baseLng + (Math.cos(seed + i) * 0.01),
         status: status,
-        battery: Math.floor(Math.random() * 100),
-        signal: -60 - Math.floor(Math.random() * 30),
+        battery: Math.floor(Math.abs(randomVal * 100)) % 100,
+        signal: -60 - Math.floor(Math.abs(randomVal * 30)),
         lastUpdate: '10分钟前'
       });
     }

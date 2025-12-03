@@ -1,4 +1,3 @@
-// miniprogram/pages/project-add/project-add.js
 const { get, post, put } = require('../../utils/request.js');
 
 Page({
@@ -6,7 +5,9 @@ Page({
     formData: {
       category: 'single',
     },
+    projectType: 'reservoir', // reservoir | embankment
     reservoirTypes: ['小（一）型', '小（二）型', '中型', '大型'],
+    embankmentTypes: ['1级', '2级', '3级', '4级', '5级', '未定级'],
     typeIndex: 1, // 默认 小（二）型
     
     region: ['浙江省', '杭州市', '余杭区'], // 默认值
@@ -41,6 +42,14 @@ Page({
 
   onLoad(options) {
     const usersPromise = this.fetchUsers();
+    
+    if (options.type) {
+      this.setData({ projectType: options.type });
+      wx.setNavigationBarTitle({ 
+        title: options.type === 'reservoir' ? '新增水库' : '新增堤防' 
+      });
+    }
+
     if (options.id) {
       wx.setNavigationBarTitle({ title: '修改项目' });
       this.setData({ isEdit: true, projectId: options.id });
@@ -62,8 +71,19 @@ Page({
       if (res.regionCity) region.push(res.regionCity);
       if (res.regionDistrict) region.push(res.regionDistrict);
 
-      // 查找索引
-      const typeIndex = this.data.reservoirTypes.indexOf(res.type);
+      // 查找类型和索引
+      let projectType = 'reservoir';
+      let typeIndex = this.data.reservoirTypes.indexOf(res.type);
+      
+      // 如果在水库类型里找不到，尝试在堤防类型里找
+      if (typeIndex === -1) {
+        const embIndex = this.data.embankmentTypes.indexOf(res.type);
+        if (embIndex > -1) {
+          projectType = 'embankment';
+          typeIndex = embIndex;
+        }
+      }
+
       const damTypeIndex = this.data.damTypes.indexOf(res.damType);
       const hazardIndex = this.data.hazardLevels.indexOf(res.hazardLevel);
       
@@ -79,6 +99,7 @@ Page({
       }));
       
       this.setData({
+        projectType,
         'formData.category': res.category || 'single',
         'formData.name': res.name,
         'formData.crestLength': res.crestLength,
@@ -184,7 +205,7 @@ Page({
   onSubmit(e) {
     const val = e.detail.value;
     if (!val.name) {
-      wx.showToast({ title: '请输入水库名称', icon: 'none' });
+      wx.showToast({ title: `请输入${this.data.projectType === 'reservoir' ? '水库' : '堤防'}名称`, icon: 'none' });
       return;
     }
 
@@ -195,9 +216,12 @@ Page({
     const adminId = adminUser ? adminUser.id : null;
     const managerId = managerUser ? managerUser.id : null;
     
+    const typeList = this.data.projectType === 'reservoir' ? this.data.reservoirTypes : this.data.embankmentTypes;
+    
     const submitData = {
       ...val,
-      type: this.data.reservoirTypes[this.data.typeIndex],
+      projectType: this.data.projectType,
+      type: typeList[this.data.typeIndex],
       region: this.data.region,
       adminId: adminId,
       managerId: managerId,

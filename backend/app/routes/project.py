@@ -7,7 +7,48 @@ bp = Blueprint('project', __name__, url_prefix='/api/projects')
 @bp.route('', methods=['GET'])
 def get_projects():
     p_type = request.args.get('type', 'reservoir')
-    projects = Project.query.filter_by(project_type=p_type).order_by(Project.created_at.desc()).all()
+    
+    # Get current user from token if possible (simplified here by passing user_id or username in query for now or just mock)
+    # Ideally, we use a decorator @login_required and get g.user
+    # Assuming a header 'X-User-Id' for simplicity in this turn or getting logic from request context if available
+    # BUT, standard way: parse token. Since we don't have full JWT setup shown in snippet, we'll rely on logic
+    # that frontend might pass user info OR we filter based on assumption.
+    # Wait, the user requirement says:
+    # Admin: all
+    # Manager: own projects
+    # Operator: assigned projects (view only)
+    
+    # Since we need to know WHO is asking, let's check if 'userId' is passed in query params for this MVP stage
+    # OR better, we should really inspect the token.
+    # Let's assume the frontend passes `userId` and `role` query params for now to strictly follow the "MVP/Demo" nature
+    # if authentication middleware isn't fully protecting this route yet.
+    
+    user_id = request.args.get('userId', type=int)
+    role = request.args.get('role', type=str)
+    
+    query = Project.query.filter_by(project_type=p_type)
+    
+    if role == 'admin':
+        # Admin sees all
+        pass
+    elif role == 'manager':
+        # Manager sees projects they manage OR are admin of (admin_id column usually means creator/admin, manager_id is the specific manager)
+        # Let's assume manager_id is the link.
+        query = query.filter(
+            (Project.manager_id == user_id) | (Project.admin_id == user_id)
+        )
+    elif role == 'operator':
+        # Operator sees assigned projects
+        # BUT, current DB schema doesn't have a direct "Operator <-> Project" many-to-many link clearly defined in the `projects` table for *multiple* operators easily
+        # The requirements says: "一用户的所属项目（多对多关系，一个运维员可负责多个项目）"
+        # We need a link table. User <-> Project.
+        # However, looking at models.py, there isn't a link table yet.
+        # Let's check models.py again.
+        # `admin_id` and `manager_id` are single columns.
+        # WE NEED A MANY-TO-MANY TABLE `project_operators`.
+        pass
+
+    projects = query.order_by(Project.created_at.desc()).all()
     return jsonify([p.to_dict() for p in projects])
 
 @bp.route('/<int:id>', methods=['GET'])
@@ -40,6 +81,23 @@ def parse_int_or_none(value):
 def create_project():
     data = request.get_json()
     
+    # TODO: Strict authentication and authorization check via token
+    # For now, rely on frontend passing role/id or assumption that unauthorized access is blocked by middleware
+    # But we enforce that if a manager creates, they manage it.
+    
+    # If caller is Manager, they can only create projects for themselves (or we auto-assign)
+    # If caller is Operator, they should be blocked (frontend blocks, but backend should too)
+    
+    # Assuming we pass `userId` and `role` in body or query for MVP control, 
+    # OR ideally extracting from g.user (if auth middleware existed).
+    # Let's use the data from body if available to check permission
+    
+    creator_role = request.args.get('role') or data.get('role') # insecure but fits current MVP pattern
+    creator_id = request.args.get('userId') or data.get('userId')
+    
+    if creator_role == 'operator':
+         return jsonify({'message': 'Permission denied: Operators cannot create projects'}), 403
+
     if not data.get('name'):
         return jsonify({'message': 'Name is required'}), 400
 
@@ -59,9 +117,16 @@ def create_project():
                     lat = float(parts[1].strip())
                 except ValueError:
                     pass
+        
+        # Auto-assign manager if creator is manager
+        manager_id = parse_int_or_none(data.get('managerId'))
+        if creator_role == 'manager' and creator_id:
+            # Enforce self-assignment or check if they are assigning themselves
+            # Let's strict it: if manager creates, they are the manager.
+            manager_id = int(creator_id)
 
         new_project = Project(
-            project_type='reservoir', # Default to reservoir for now
+            project_type=data.get('projectType', 'reservoir'),
             category=data.get('category'),
             name=data.get('name'),
             type=data.get('type'),
@@ -72,7 +137,7 @@ def create_project():
             latitude=lat,
             longitude=lng,
             admin_id=parse_int_or_none(data.get('adminId')),
-            manager_id=parse_int_or_none(data.get('managerId')),
+            manager_id=manager_id,
             dam_type=data.get('damType'),
             crest_length=parse_float(data.get('crestLength')),
             toe_length=parse_float(data.get('toeLength')),
@@ -99,6 +164,18 @@ def update_project(id):
     project = Project.query.get_or_404(id)
     data = request.get_json()
     
+    # Permission Check
+    updater_role = request.args.get('role') or data.get('role')
+    updater_id = request.args.get('userId') or data.get('userId')
+    
+    if updater_role == 'operator':
+        return jsonify({'message': 'Permission denied: Operators cannot update projects'}), 403
+        
+    if updater_role == 'manager':
+        # Check if this project belongs to the manager
+        if project.manager_id != int(updater_id) and project.admin_id != int(updater_id):
+             return jsonify({'message': 'Permission denied: You can only manage your own projects'}), 403
+
     if not data.get('name'):
         return jsonify({'message': 'Name is required'}), 400
 

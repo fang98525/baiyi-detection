@@ -42,6 +42,18 @@
     </view>
   </view>
 
+  <!-- 处理流程时间轴 -->
+  <view class="card timeline-card" wx:if="{{alert.timeline && alert.timeline.length > 0}}">
+    <view class="card-title">处理进度</view>
+    <view class="timeline-item" wx:for="{{alert.timeline}}" wx:key="time">
+        <view class="timeline-dot"></view>
+        <view class="timeline-content">
+            <view class="timeline-desc">{{item.desc}}</view>
+            <view class="timeline-time">{{item.time}}</view>
+        </view>
+    </view>
+  </view>
+
   <!-- 操作区域 -->
   
   <!-- 状态：待处理 -->

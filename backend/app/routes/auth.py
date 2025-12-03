@@ -16,33 +16,32 @@ def login():
 
     user = User.query.filter_by(username=username).first()
 
-    # In a real app, we should use password hashing. 
-    # For now, we'll do simple comparison or check if hash matches
-    # Assuming the initial seed data has 'hash_placeholder' which won't match anything unless we update logic
-    
-    # Updating login logic to support both plain text (for dev) and hashed
     if user:
-        # Simple password check for dev/demo purposes if hash is a placeholder
+        # 检查是否激活
+        if not user.is_active:
+            return jsonify({'message': '账户待审核，请联系管理员'}), 403
+
+        # Password verification logic
+        password_valid = False
         if user.password_hash == 'hash_placeholder':
-            # Allow login if password matches username (just for demo convenience if needed)
-            # OR we strictly require password. Let's say default password is '123456' for seeded users
-            if password == '123456': 
-                 pass
-            else:
-                 return jsonify({'message': 'Invalid credentials'}), 401
-        elif not check_password_hash(user.password_hash, password):
-             return jsonify({'message': 'Invalid credentials'}), 401
-             
-        return jsonify({
-            'token': f'mock_token_{user.id}', # JWT implementation skipped for brevity
-            'userInfo': {
-                'id': user.id,
-                'username': user.username,
-                'role': user.role
-            }
-        })
+            if password == '123456':
+                password_valid = True
+        elif check_password_hash(user.password_hash, password):
+            password_valid = True
+
+        if password_valid:
+            return jsonify({
+                'token': f'mock_token_{user.id}',
+                'userInfo': {
+                    'id': user.id,
+                    'username': user.username,
+                    'role': user.role
+                }
+            })
+        else:
+            return jsonify({'message': '密码错误'}), 400
     
-    return jsonify({'message': 'User not found'}), 404
+    return jsonify({'message': '账号不存在'}), 404
 
 @bp.route('/register', methods=['POST'])
 def register():
@@ -50,20 +49,26 @@ def register():
     username = data.get('username')
     password = data.get('password')
     role = data.get('role', 'operator') # Default to operator
+    remark_name = data.get('remarkName') # 备注姓名
+    phone = data.get('phone') # 手机号
 
     if not username or not password:
         return jsonify({'message': 'Username and password are required'}), 400
     
     if User.query.filter_by(username=username).first():
-        return jsonify({'message': 'Username already exists'}), 409
+        return jsonify({'message': '用户名已存在'}), 409
 
     # Hash password
     hashed_password = generate_password_hash(password)
     
+    # 默认为未激活
     new_user = User(
         username=username,
         password_hash=hashed_password,
-        role=role
+        role=role,
+        is_active=False,
+        remark_name=remark_name,
+        phone=phone
     )
     
     try:

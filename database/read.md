@@ -1,3 +1,13 @@
+<!--
+ * @Author: zqfang5 zqfang5@iflytek.com
+ * @Date: 2025-12-02 10:14:15
+ * @Description: 
+ * @FilePath: \detcetion_v2\database\read.md
+ * @LastEditTime: 2025-12-03 11:21:29
+ * @LastEditors: zqfang5 zqfang5@iflytek.com
+ * 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+-->
 navicat 安装
 https://www.cnblogs.com/wanghaiyuanblogs/p/18502406
 
@@ -13,7 +23,8 @@ cd "d:\project\上半年目标-baiyi智能化\detcetion_v2\database"
 # 执行 sql 文件
 # 格式: mysql -u 用户名 -p密码 < 文件名
 # 注意: -p和密码之间没有空格
-mysql -u root -p<password> < init.sql
+# 格式：mysql -u 用户名 -p < SQL文件路径
+mysql -u root -p < database/init.sql
 
 
 # 登录

@@ -29,8 +29,12 @@ Page({
    * 加载项目数据
    */
   loadProjects() {
+    const userInfo = wx.getStorageSync('userInfo') || {};
     wx.showLoading({ title: '加载中...' });
-    get(`/projects?type=${this.data.currentTab}`)
+    
+    // 传递 userId 和 role 以便后端过滤数据
+    // 注意：实际生产应依赖后端解析 Token，这里为了配合后端逻辑显式传递
+    get(`/projects?type=${this.data.currentTab}&userId=${userInfo.id}&role=${userInfo.role}`)
       .then(res => {
         this.setData({
           currentList: res
@@ -64,8 +68,18 @@ Page({
    * 跳转新增页面
    */
   onAddProject() {
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    if (userInfo.role === 'operator') {
+      wx.showModal({
+        title: '提示',
+        content: '您没有新增项目权限，请联系项目负责人',
+        showCancel: false
+      });
+      return;
+    }
+    
     wx.navigateTo({
-      url: '/pages/project-add/project-add',
+      url: `/pages/project-add/project-add?type=${this.data.currentTab}`,
     });
   },
 
@@ -143,6 +157,16 @@ Page({
    * 修改项目
    */
   onEdit(e) {
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    if (userInfo.role === 'operator') {
+      wx.showModal({
+        title: '提示',
+        content: '您没有修改项目信息权限，请联系项目负责人',
+        showCancel: false
+      });
+      return;
+    }
+
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: `/pages/project-add/project-add?id=${id}`,
@@ -153,6 +177,16 @@ Page({
    * 从弹窗点击修改
    */
   onEditFromModal() {
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    if (userInfo.role === 'operator') {
+      wx.showModal({
+        title: '提示',
+        content: '您没有修改项目信息权限，请联系项目负责人',
+        showCancel: false
+      });
+      return;
+    }
+
     const id = this.data.currentProject.id;
     this.closeModal();
     wx.navigateTo({

@@ -60,7 +60,7 @@ git commit -m "Initial commit: 项目初始化，包含小程序前端和Python�
 git branch -M main
 
 # 关联远程仓库
-git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
+git remote add origin https://github.com/fang98525/baiyi-detection.git
 
 # 推送代码
 git push -u origin main

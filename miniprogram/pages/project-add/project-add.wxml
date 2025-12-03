@@ -6,29 +6,29 @@
       <view class="section-title">核心基础信息 (必填)</view>
       
       <view class="form-item">
-        <view class="label">水库类别</view>
+        <view class="label">{{projectType === 'reservoir' ? '水库' : '堤防'}}类别</view>
         <radio-group name="category" bindchange="onCategoryChange">
-          <label class="radio-label"><radio value="single" checked="{{formData.category === 'single'}}"/>单个水库</label>
-          <label class="radio-label"><radio value="multiple" checked="{{formData.category === 'multiple'}}"/>多个水库集合</label>
+          <label class="radio-label"><radio value="single" checked="{{formData.category === 'single'}}"/>单个{{projectType === 'reservoir' ? '水库' : '堤防'}}</label>
+          <label class="radio-label"><radio value="multiple" checked="{{formData.category === 'multiple'}}"/>多个{{projectType === 'reservoir' ? '水库' : '堤防'}}集合</label>
         </radio-group>
       </view>
 
       <view class="form-item">
-        <view class="label">水库名称</view>
-        <input name="name" placeholder="请输入水库名称" class="input" />
+        <view class="label">{{projectType === 'reservoir' ? '水库' : '堤防'}}名称</view>
+        <input name="name" value="{{formData.name}}" placeholder="请输入{{projectType === 'reservoir' ? '水库' : '堤防'}}名称" class="input" />
       </view>
 
       <view class="form-item">
-        <view class="label">水库类型</view>
-        <picker bindchange="onTypeChange" value="{{typeIndex}}" range="{{reservoirTypes}}">
+        <view class="label">{{projectType === 'reservoir' ? '水库' : '堤防'}}类型</view>
+        <picker bindchange="onTypeChange" value="{{typeIndex}}" range="{{projectType === 'reservoir' ? reservoirTypes : embankmentTypes}}">
           <view class="picker">
-            {{reservoirTypes[typeIndex]}}
+            {{projectType === 'reservoir' ? reservoirTypes[typeIndex] : embankmentTypes[typeIndex]}}
           </view>
         </picker>
       </view>
 
       <view class="form-item">
-        <view class="label">水库区域</view>
+        <view class="label">{{projectType === 'reservoir' ? '水库' : '堤防'}}区域</view>
         <picker mode="region" bindchange="onRegionChange" value="{{region}}">
           <view class="picker">
             {{region[0]}}，{{region[1]}}，{{region[2]}}
@@ -49,41 +49,41 @@
       </view>
     </view>
 
-    <!-- 第二部分：水库参数信息 -->
+    <!-- 第二部分：参数信息 -->
     <view class="section">
-      <view class="section-title">水库参数信息 (选填)</view>
+      <view class="section-title">{{projectType === 'reservoir' ? '水库' : '堤防'}}参数信息 (选填)</view>
 
       <view class="form-item">
-        <view class="label">水库坝型</view>
+        <view class="label">{{projectType === 'reservoir' ? '水库坝型' : '堤防结构'}}</view>
         <picker bindchange="onDamTypeChange" value="{{damTypeIndex}}" range="{{damTypes}}">
           <view class="picker {{damTypeIndex === -1 ? 'placeholder' : ''}}">
-            {{damTypeIndex === -1 ? '请选择大坝坝型' : damTypes[damTypeIndex]}}
+            {{damTypeIndex === -1 ? (projectType === 'reservoir' ? '请选择大坝坝型' : '请选择堤防结构') : damTypes[damTypeIndex]}}
           </view>
         </picker>
       </view>
 
       <view class="form-item">
-        <view class="label">坝顶长度 (米)</view>
+        <view class="label">{{projectType === 'reservoir' ? '坝顶长度' : '堤顶长度'}} (米)</view>
         <input name="crestLength" value="{{formData.crestLength}}" placeholder="请输入长度" type="number" class="input" />
       </view>
 
       <view class="form-item">
-        <view class="label">坝脚长度 (米)</view>
+        <view class="label">{{projectType === 'reservoir' ? '坝脚长度' : '堤脚长度'}} (米)</view>
         <input name="toeLength" value="{{formData.toeLength}}" placeholder="请输入长度" type="number" class="input" />
       </view>
 
       <view class="form-item">
-        <view class="label">斜坡长度 (米)</view>
+        <view class="label">{{projectType === 'reservoir' ? '斜坡长度' : '护坡长度'}} (米)</view>
         <input name="slopeLength" value="{{formData.slopeLength}}" placeholder="请输入长度" type="number" class="input" />
       </view>
 
       <view class="form-item">
-        <view class="label">最大坝高 (米)</view>
+        <view class="label">{{projectType === 'reservoir' ? '最大坝高' : '最大堤高'}} (米)</view>
         <input name="maxHeight" value="{{formData.maxHeight}}" placeholder="请输入高度" type="number" class="input" />
       </view>
 
       <view class="form-item">
-        <view class="label">水库地址</view>
+        <view class="label">{{projectType === 'reservoir' ? '水库' : '堤防'}}地址</view>
         <view class="input-with-btn">
           <input name="address" value="{{address}}" placeholder="请选择详细地址" class="input" />
           <button size="mini" bindtap="chooseLocation" class="btn-small">选择</button>

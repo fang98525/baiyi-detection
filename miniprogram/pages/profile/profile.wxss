@@ -140,7 +140,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 10000; /* 增加 z-index 确保在最上层 */
 }
 
 .modal-container {

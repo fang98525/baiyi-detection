@@ -7,6 +7,8 @@ Page({
     username: '',
     password: '',
     role: 'operator',
+    remarkName: '',
+    phone: '',
     loading: false
   },
 
@@ -17,6 +19,14 @@ Page({
   onPasswordInput(e) {
     this.setData({ password: e.detail.value });
   },
+
+  onRemarkNameInput(e) {
+    this.setData({ remarkName: e.detail.value });
+  },
+
+  onPhoneInput(e) {
+    this.setData({ phone: e.detail.value });
+  },
   
   onRoleChange(e) {
     this.setData({ role: e.detail.value });
@@ -26,7 +36,9 @@ Page({
     this.setData({
       isRegister: !this.data.isRegister,
       username: '',
-      password: ''
+      password: '',
+      phone: '',
+      remarkName: ''
     });
   },
 
@@ -84,8 +96,8 @@ Page({
   },
 
   async handleRegister() {
-    const { username, password, role } = this.data;
-    if (!username || !password) {
+    const { username, password, role, remarkName, phone } = this.data;
+    if (!username || !password || !remarkName || !phone) {
       wx.showToast({
         title: '请填写完整信息',
         icon: 'none'
@@ -96,22 +108,30 @@ Page({
     this.setData({ loading: true });
 
     try {
-      await post('/auth/register', { username, password, role });
+      // 真正提交注册
+      await post('/auth/register', { username, password, role, remarkName, phone });
       
-      wx.showToast({
-        title: '注册成功',
-        icon: 'success'
+      // 提交成功后弹窗提示
+      wx.showModal({
+        title: '提交成功',
+        content: '您的注册申请已提交。请联系管理员 zqfang5 (18271587343) 审核并添加账户后即可登录。',
+        showCancel: false,
+        confirmText: '知道了',
+        success: (res) => {
+          if (res.confirm) {
+            this.toggleMode();
+            // 清空表单（可选：保留用户名方便登录）
+            this.setData({
+              password: '',
+              remarkName: ''
+            });
+          }
+        }
       });
-
-      // 注册成功后切换回登录
-      setTimeout(() => {
-        this.toggleMode();
-        // 自动填充刚刚注册的账号
-        this.setData({ username: username });
-      }, 1500);
 
     } catch (error) {
       console.error(error);
+      // post 方法通常已经处理了错误提示，如果需要在页面特定处理可以在这里加
     } finally {
       this.setData({ loading: false });
     }
