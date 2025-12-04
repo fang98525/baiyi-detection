@@ -36,8 +36,8 @@
       {
         "pagePath": "pages/projects/projects",
         "text": "项目管理",
-        "iconPath": "images/tabbar/profile.png",
-        "selectedIconPath": "images/tabbar/profile-active.png"
+        "iconPath": "images/tabbar/file.png",
+        "selectedIconPath": "images/tabbar/file-active.png"
       },
       {
         "pagePath": "pages/dashboard/dashboard",
