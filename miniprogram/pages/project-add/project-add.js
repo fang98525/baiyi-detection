@@ -176,17 +176,62 @@ Page({
     this.setData({ hazardIndex: e.detail.value });
   },
 
+  onAddressInput(e) {
+    this.setData({
+      address: e.detail.value
+    });
+  },
+
   chooseLocation() {
     const that = this;
+    
+    // 解析当前已有的经纬度，作为打开地图时的中心点
+    let latitude = null;
+    let longitude = null;
+    
+    if (this.data.latlng) {
+      const parts = this.data.latlng.split('/');
+      if (parts.length === 2) {
+        // 格式是 "经度 / 纬度" -> "longitude / latitude"
+        longitude = parseFloat(parts[0].trim());
+        latitude = parseFloat(parts[1].trim());
+      }
+    }
+
     wx.chooseLocation({
+      latitude: latitude || undefined,
+      longitude: longitude || undefined,
       success(res) {
-        that.setData({
-          address: res.address,
-          latlng: `${res.longitude} / ${res.latitude}`
-        });
+        const address = res.address; 
+        const latlng = `${res.longitude} / ${res.latitude}`;
+        
+        const updates = {
+          address,
+          latlng
+        };
+        
+        try {
+          const reg = /^(.+?(?:省|自治区|北京市|天津市|上海市|重庆市))(.+?(?:市|自治州|地区|盟|区|县))(.+?(?:区|县|市|旗))/;
+          const match = address.match(reg);
+          
+          if (match) {
+            let [full, p, c, d] = match;
+            if (['北京市', '天津市', '上海市', '重庆市'].includes(p)) {
+               updates.region = [p, p, c];
+            } else {
+               updates.region = [p, c, d];
+            }
+          }
+        } catch (e) {
+          console.log('地址解析失败', e);
+        }
+
+        that.setData(updates);
       },
       fail(err) {
-        console.log('选择位置取消或失败', err);
+        if (err.errMsg.indexOf('cancel') === -1) {
+          wx.showToast({ title: '定位失败', icon: 'none' });
+        }
       }
     });
   },

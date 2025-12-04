@@ -71,7 +71,7 @@
         <view class="about-section">
           <view class="section-title">项目背景</view>
           <view class="section-desc">
-            本项目致力于将人工智能技术应用于生态环境监测领域，解决传统监测手段滞后、数据分析困难等问题，实现全天候、智能化的生态保护。
+            本系统致力于将人工智能技术应用于生态环境监测领域，解决传统监测手段滞后、数据分析困难等问题，实现全天候、智能化的生态保护。
           </view>
         </view>
 

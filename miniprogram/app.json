@@ -59,5 +59,9 @@
     "scope.userLocation": {
       "desc": "您的位置信息将用于显示当前位置与设备的距离"
     }
-  }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ]
 }

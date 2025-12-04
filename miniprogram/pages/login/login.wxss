@@ -94,6 +94,6 @@
 .footer-info {
   margin-top: 80rpx;
   text-align: center;
-  color: #ccc;
+  color: #cccccc;
   font-size: 30rpx;
 }

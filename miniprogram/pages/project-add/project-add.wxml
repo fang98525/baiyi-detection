@@ -85,8 +85,8 @@
       <view class="form-item">
         <view class="label">{{projectType === 'reservoir' ? '水库' : '堤防'}}地址</view>
         <view class="input-with-btn">
-          <input name="address" value="{{address}}" placeholder="请选择详细地址" class="input" />
-          <button size="mini" bindtap="chooseLocation" class="btn-small">选择</button>
+          <input name="address" value="{{address}}" bindinput="onAddressInput" placeholder="请选择或输入详细地址" class="input" />
+          <button size="mini" bindtap="chooseLocation" class="btn-small" type="primary" plain="true">📍 定位</button>
         </view>
       </view>
 
